@@ -39,7 +39,7 @@ def extract_force_signals():
 
     return signals
 
-def extract_force_main_weld_segment():
+def extract_force_main_weld_segment(plot=False):
 
     """
     Plots the main weld segment of the force graph for each experiment
@@ -47,7 +47,11 @@ def extract_force_main_weld_segment():
 
     signals =  extract_force_signals()
 
-    for experiment, time, force in signals:
+    main_signals = []
+
+    for i, ele in enumerate(signals):
+
+        experiment, time, force = ele
 
         # plt.figure(figsize=(16,8))
         # plt.title(force_signal)
@@ -76,7 +80,7 @@ def extract_force_main_weld_segment():
 
         main_weld_start_idx = ptr
 
-        # When we neear the end of the main weld we see a decrease in noise
+        # When we near the end of the main weld we see a decrease in noise
 
         ptr = main_weld_start_idx + 10000  
 
@@ -92,13 +96,20 @@ def extract_force_main_weld_segment():
 
         main_weld_end_idx = ptr
 
-        plt.figure(figsize=(16,8))
-        plt.title(experiment)
-        plt.plot(time, force)
-        plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
-        plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
-        plt.show()
+        
+        if i == 0 and plot :
+            plt.figure(figsize=(16,8))
+            plt.title(experiment)
+            plt.plot(time, force)
+            plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
+            plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
+            plt.show()
 
+        main_times = time[main_weld_start_idx:main_weld_end_idx+1]
+        main_forces = force[main_weld_start_idx:main_weld_end_idx+1]
+        main_signals.append([main_forces, main_times])
+    
+    return main_signals
 # Power Signals
 
 def extract_power_signals():
