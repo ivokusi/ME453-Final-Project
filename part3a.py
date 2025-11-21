@@ -7,6 +7,12 @@ base_path = "./data/part3/"
 
 def extract_force_signals():
 
+    """
+    Extracts the time and force signals for each experiment in the Force_Signals/ directory
+
+    Returns an array of (experiment name, time array, force array) tuples
+    """
+
     # loop through files within Force_Signals dir
 
     force_signals = os.listdir(base_path + "Force_Signals/")
@@ -34,6 +40,10 @@ def extract_force_signals():
     return signals
 
 def extract_force_main_weld_segment():
+
+    """
+    Plots the main weld segment of the force graph for each experiment
+    """
 
     signals =  extract_force_signals()
 
@@ -93,6 +103,12 @@ def extract_force_main_weld_segment():
 
 def extract_power_signals():
 
+    """
+    Extracts the time and power signals for each experiment in the Power_Signals/ directory
+
+    Returns an array of (experiment name, time array, power array) tuples
+    """
+
     power_signals = os.listdir(base_path + "Power_Signals/")
 
     signals = []
@@ -118,6 +134,10 @@ def extract_power_signals():
     return signals
 
 def extract_power_main_weld_segment():
+
+    """
+    Plots the main weld segment of the power graph for each experiment
+    """
 
     signals =  extract_power_signals()
 
