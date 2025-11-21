@@ -89,7 +89,7 @@ def extract_force_main_weld_segment(experiment, time, force, plot=False):
     main_weld_end_idx = ptr
 
     if plot:
-
+        
         plt.figure(figsize=(16,8))
         plt.title(experiment)
         plt.plot(time, force)
