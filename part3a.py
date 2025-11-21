@@ -15,7 +15,7 @@ def extract_force_signals():
 
     # loop through files within Force_Signals dir
 
-    force_signals = os.listdir(base_path + "Force_Signals/")
+    force_signals = sorted(os.listdir(base_path + "Force_Signals/"))
 
     signals = []
 
@@ -109,7 +109,7 @@ def extract_power_signals():
     Returns an array of (experiment name, time array, power array) tuples
     """
 
-    power_signals = os.listdir(base_path + "Power_Signals/")
+    power_signals = sorted(os.listdir(base_path + "Power_Signals/"))
 
     signals = []
 
@@ -185,7 +185,6 @@ def extract_power_main_weld_segment(experiment, time, power, plot=False):
         plt.plot(time, power)
         plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
         plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
-        plt.legend()
         plt.show()
 
     return (experiment, time[main_weld_start_idx:main_weld_end_idx + 1], power[main_weld_start_idx:main_weld_end_idx + 1])
