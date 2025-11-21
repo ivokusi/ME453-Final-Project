@@ -39,58 +39,56 @@ def extract_force_signals():
 
     return signals
 
-def extract_force_main_weld_segment():
+def extract_force_main_weld_segment(experiment, time, force, plot=False):
 
     """
-    Plots the main weld segment of the force graph for each experiment
+    Extract the main weld segment of the force graph for each experiment
     """
 
-    signals =  extract_force_signals()
+    # plt.figure(figsize=(16,8))
+    # plt.title(force_signal)
+    # plt.plot(time[80000:], force[80000:])
+    # plt.show()
 
-    for experiment, time, force in signals:
+    # Based on exploration we know that the main weld for all experiments starts somewhere after idx 80000
 
-        # plt.figure(figsize=(16,8))
-        # plt.title(force_signal)
-        # plt.plot(time[80000:], force[80000:])
-        # plt.show()
+    # We see that leading up to the main weld there is minimal noise. 
+    # When we reach the main weld we see a spike in noise
 
-        # Based on exploration we know that the main weld for all experiments starts somewhere after idx 80000
+    n = len(time)
+    
+    window = 50
+    noise_threshold_start = 0.025
 
-        # We see that leading up to the main weld there is minimal noise. 
-        # When we reach the main weld we see a spike in noise
-
-        n = len(time)
+    ptr = 80000
+    while ptr < n:
         
-        window = 50
-        noise_threshold_start = 0.025
+        # Look into a 20 point window
+        diff = 1 / window * sum([abs(force[i + 1] - force[i]) for i in range(ptr, ptr + window)])
+        if diff >= noise_threshold_start:
+            break
 
-        ptr = 80000
-        while ptr < n:
-            
-            # Look into a 20 point window
-            diff = 1 / window * sum([abs(force[i + 1] - force[i]) for i in range(ptr, ptr + window)])
-            if diff >= noise_threshold_start:
-                break
+        ptr += window
 
-            ptr += window
+    main_weld_start_idx = ptr
 
-        main_weld_start_idx = ptr
+    # When we neear the end of the main weld we see a decrease in noise
 
-        # When we neear the end of the main weld we see a decrease in noise
+    ptr = main_weld_start_idx + 10000  
 
-        ptr = main_weld_start_idx + 10000  
+    noise_threshold_end = 0.035
 
-        noise_threshold_end = 0.035
+    while ptr < n:
 
-        while ptr < n:
+        diff = 1 / window * sum([abs(force[i + 1] - force[i]) for i in range(ptr, ptr + window)])
+        if diff < noise_threshold_end:
+            break
 
-            diff = 1 / window * sum([abs(force[i + 1] - force[i]) for i in range(ptr, ptr + window)])
-            if diff < noise_threshold_end:
-                break
+        ptr += window
 
-            ptr += window
+    main_weld_end_idx = ptr
 
-        main_weld_end_idx = ptr
+    if plot:
 
         plt.figure(figsize=(16,8))
         plt.title(experiment)
@@ -98,6 +96,8 @@ def extract_force_main_weld_segment():
         plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
         plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
         plt.show()
+
+    return (experiment, time[main_weld_start_idx:main_weld_end_idx + 1], force[main_weld_start_idx:main_weld_end_idx + 1])
 
 # Power Signals
 
@@ -133,54 +133,52 @@ def extract_power_signals():
 
     return signals
 
-def extract_power_main_weld_segment():
+def extract_power_main_weld_segment(experiment, time, power, plot=False):
 
     """
-    Plots the main weld segment of the power graph for each experiment
+    Extract the main weld segment of the power graph
     """
 
-    signals =  extract_power_signals()
+    # plt.figure(figsize=(12,8))
+    # plt.title(power_signal)
+    # plt.plot(time, power)
+    # plt.show()
 
-    for experiment, time, power in signals:
+    # The main weld starts when we observe an increase in power 
+    
+    n = len(time)
 
-        # plt.figure(figsize=(12,8))
-        # plt.title(power_signal)
-        # plt.plot(time, power)
-        # plt.show()
+    window = 2
+    increase_threshold = 25
 
-        # The main weld starts when we observe an increase in power 
-        
-        n = len(time)
+    ptr = 0
+    while ptr < n:
 
-        window = 2
-        increase_threshold = 25
+        increase = 1 / window * sum([power[i + 1] - power[i] for i in range(ptr, ptr + window)])
+        if increase >= increase_threshold:
+            break
 
-        ptr = 0
-        while ptr < n:
+        ptr += window
 
-            increase = 1 / window * sum([power[i + 1] - power[i] for i in range(ptr, ptr + window)])
-            if increase >= increase_threshold:
-                break
+    main_weld_start_idx = ptr
 
-            ptr += window
+    # The main weld ends when we observe a decrease in power
 
-        main_weld_start_idx = ptr
+    ptr = main_weld_start_idx + 100
 
-        # The main weld ends when we observe a decrease in power
+    decrease_threshold = 500
 
-        ptr = main_weld_start_idx + 100
+    while ptr < n:
 
-        decrease_threshold = 500
+        decrease = 1 / window * sum([power[i] - power[i + 1] for i in range(ptr, ptr + window)])
+        if decrease >= decrease_threshold:
+            break
 
-        while ptr < n:
+        ptr += window
 
-            decrease = 1 / window * sum([power[i] - power[i + 1] for i in range(ptr, ptr + window)])
-            if decrease >= decrease_threshold:
-                break
+    main_weld_end_idx = ptr
 
-            ptr += window
-
-        main_weld_end_idx = ptr
+    if plot:
 
         plt.figure(figsize=(12,8))
         plt.title(experiment)
@@ -189,3 +187,5 @@ def extract_power_main_weld_segment():
         plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
         plt.legend()
         plt.show()
+
+    return (experiment, time[main_weld_start_idx:main_weld_end_idx + 1], power[main_weld_start_idx:main_weld_end_idx + 1])
