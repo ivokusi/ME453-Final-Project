@@ -1,4 +1,7 @@
+from sklearn.preprocessing import StandardScaler
 from scipy.signal import medfilt, savgol_filter
+from scipy.signal import find_peaks
+from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -60,19 +63,38 @@ def extract_features_group_b(time, power):
     return rise_peak, rise_slope, rise_duration, dip_depth
 
 ## Functions for group C
-def extract_peaks(main_signal, **kwargs):
-    """
-     Input: Main weld signal
-     Output : first 2 peaks magnitude and frequency
-    """
-    time, force = main_signal
-    df_main_weld_signal = pd.DataFrame(data={'Force' : force, 'Time' : time})
-    print(df_main_weld_signal)
-    """
-    new_df = pd.DataFrame(index = df_main_weld_signal.index)
-    for i,vals in df_main_weld_signal.items():
-        peaks, _ = fp(vals, **kwargs)
-        new_df[i+'_pks'] = new_df.index.isin(peaks+df_main_weld_signal.index.min())
-        peak_filter = new_df.sum(axis =1)>=1
-    return df_main_weld_signal.loc[peak_filter]
-    """
+
+def extract_features_group_c(time, force):
+
+    time = np.array(time)
+    force = np.array(force)
+
+    X = np.column_stack((time, force))
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    time = X_scaled[:, 0]
+    force = X_scaled[:, 1]
+    
+    n = len(time)
+
+    sampling_rate = 100000
+
+    fft_values = fft(force) / n
+    frequencies = fftfreq(n, 1 / sampling_rate)
+
+    positive_frequencies = frequencies[:n // 2]
+    magnitude_spectrum = np.abs(fft_values[:n // 2])
+
+    peaks, _ = find_peaks(magnitude_spectrum)
+
+    sorted_peaks = peaks[np.argsort(magnitude_spectrum[peaks])][::-1]
+    
+    first_peak_freq = positive_frequencies[sorted_peaks[0]]
+    first_peak_magn = magnitude_spectrum[sorted_peaks[0]]
+
+    second_peak_freq = positive_frequencies[sorted_peaks[1]]
+    second_peak_magn = magnitude_spectrum[sorted_peaks[1]]
+
+    return first_peak_freq, first_peak_magn, second_peak_freq, second_peak_magn
