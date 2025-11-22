@@ -71,3 +71,5 @@ def plot_best_features(df):
     ax.legend()
     plt.show()
 
+    return best_features
+
