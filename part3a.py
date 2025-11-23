@@ -92,9 +92,11 @@ def extract_force_main_weld_segment(experiment, time, force, plot=False):
         
         plt.figure(figsize=(16,8))
         plt.title(experiment)
-        plt.plot(time, force)
-        plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
-        plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
+
+        plt.plot(time, force, color='cornflowerblue')
+        plt.axvline(x=time[main_weld_start_idx], color='red', linestyle='--')
+        plt.axvline(x=time[main_weld_end_idx], color='red', linestyle='--')
+
         plt.show()
 
     return (experiment, time[main_weld_start_idx:main_weld_end_idx + 1], force[main_weld_start_idx:main_weld_end_idx + 1])
@@ -180,11 +182,13 @@ def extract_power_main_weld_segment(experiment, time, power, plot=False):
 
     if plot:
 
-        plt.figure(figsize=(12,8))
+        plt.figure(figsize=(16,8))
         plt.title(experiment)
-        plt.plot(time, power)
-        plt.axvline(x=time[main_weld_start_idx], color='r', linestyle='--')
-        plt.axvline(x=time[main_weld_end_idx], color='r', linestyle='--')
+
+        plt.plot(time, power, color='cornflowerblue')
+        plt.axvline(x=time[main_weld_start_idx], color='red', linestyle='--')
+        plt.axvline(x=time[main_weld_end_idx], color='red', linestyle='--')
+        
         plt.show()
 
     return (experiment, time[main_weld_start_idx:main_weld_end_idx + 1], power[main_weld_start_idx:main_weld_end_idx + 1])

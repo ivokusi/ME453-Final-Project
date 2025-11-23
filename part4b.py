@@ -4,12 +4,14 @@ from sklearn.metrics import confusion_matrix
 import numpy as np
 
 # We do not need to scale X as the data is already normalized
-def classify(X, y, classifier, splits=5, classifier_name_prefix=""):
+
+def classify(X, y, classifier, classifier_name, splits=5):
     
     kf = KFold(n_splits=splits, random_state=42, shuffle=True)
 
     accuracies = []
-    ConfMatrices = []
+    confusion_matrices = []
+
     for i, (train_index, test_index) in enumerate(kf.split(X)):
         
         X_train = X.iloc[train_index, :]
@@ -24,15 +26,14 @@ def classify(X, y, classifier, splits=5, classifier_name_prefix=""):
         ConfMatrix = confusion_matrix(y_test, y_pred)
         
         print(f"Fold {i + 1}")
-        print(f"{classifier_name_prefix}{classifier.__class__.__name__} Accuracy: {accuracy}")
+        print(f"{classifier_name} Accuracy: {accuracy}")
         print("#" * 70)
         
         accuracies.append(accuracy)
-        ConfMatrices.append(ConfMatrix)
+        confusion_matrices.append(ConfMatrix)
         
-
     avg_accuracy = np.mean(accuracies)
-    print(f"Average {classifier_name_prefix}{classifier.__class__.__name__} Accuracy: {avg_accuracy}")
+    print(f"Average {classifier_name} Accuracy: {avg_accuracy}")
 
-    return ConfMatrices, accuracies
+    return accuracies, confusion_matrices
         
