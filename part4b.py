@@ -1,7 +1,11 @@
-from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
 import numpy as np
+import warnings
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
+
+warnings.filterwarnings("ignore")
 
 # We do not need to scale X as the data is already normalized
 
@@ -25,9 +29,9 @@ def classify(X, y, classifier, classifier_name, splits=5):
         accuracy = accuracy_score(y_test, y_pred)
         ConfMatrix = confusion_matrix(y_test, y_pred)
         
-        print(f"Fold {i + 1}")
-        print(f"{classifier_name} Accuracy: {accuracy}")
-        print("#" * 70)
+        #print(f"Fold {i + 1}")
+        #print(f"{classifier_name} Accuracy: {accuracy}")
+        #print("#" * 70)
         
         accuracies.append(accuracy)
         confusion_matrices.append(ConfMatrix)
