@@ -13,16 +13,20 @@ def error_plots(cm, classifier_name):
     error_rates = []
 
     plt.figure(figsize=(7,5))
+    
     for i in folds_:
+        
         print(f"Fold {i}")
         print(cm[i-1])
-        print("#"*20)
+        print("#" * 20)
+        
         error_rates.append(error_rate(cm[i-1]))
         ce = class_errors(cm[i-1])
         plt.plot(classes, ce, marker='o', label=f"Fold {i}")
 
     plt.title(f"Per-Class Error for all Folds for {classifier_name}")
     plt.ylabel("Error Rate")
+    plt.ylim((0, 1))
     plt.legend()
     plt.grid(True)
     plt.show()
@@ -31,5 +35,6 @@ def error_plots(cm, classifier_name):
     plt.bar(folds_, error_rates)
     plt.title(f"Overall Error Rate by Folds for {classifier_name}")
     plt.ylabel("Error Rate")
+    plt.ylim((0, 1))
     plt.grid(True)
     plt.show()
