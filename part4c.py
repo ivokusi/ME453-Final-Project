@@ -7,7 +7,7 @@ def error_rate(cm):
 def class_errors(cm):
     return 1 - np.diag(cm) / cm.sum(axis=1)
 
-def error_plots(cms, classifier_names):
+def error_plots(cms, classifier_names, wspace=None):
     
     folds_ = np.arange(1,6,1)
     classes = ["Class 1", "Class 2", "Class 3"] 
@@ -41,6 +41,8 @@ def error_plots(cms, classifier_names):
         axs[1,j].set_ylim((0, 1))
         axs[1,j].grid(True)
     
-    # Add space between subplots to avoid label/title collisions
     plt.tight_layout()
+    
+    if wspace is not None:
+        plt.subplots_adjust(wspace=wspace)
         
