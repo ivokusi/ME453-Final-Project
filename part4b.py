@@ -10,6 +10,13 @@ warnings.filterwarnings("ignore")
 # We do not need to scale X as the data is already normalized
 
 def classify(X, y, classifier, classifier_name, splits=5):
+
+    # Train error
+    classifier.fit(X, y)
+    y_pred = classifier.predict(X)
+
+    train_accuracy = accuracy_score(y, y_pred)
+    print(f"{classifier} Train Accuracy", train_accuracy)
     
     kf = KFold(n_splits=splits, random_state=42, shuffle=True)
 
@@ -37,7 +44,7 @@ def classify(X, y, classifier, classifier_name, splits=5):
         confusion_matrices.append(ConfMatrix)
         
     avg_accuracy = np.mean(accuracies)
-    print(f"Average {classifier_name} Accuracy: {avg_accuracy}")
+    print(f"Average {classifier_name} Validation Accuracy: {avg_accuracy}")
 
     return accuracies, confusion_matrices
         
