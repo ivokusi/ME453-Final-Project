@@ -3,7 +3,7 @@ import warnings
 
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, LeaveOneOut
 
 warnings.filterwarnings("ignore")
 
@@ -16,9 +16,10 @@ def classify(X, y, classifier, classifier_name, splits=5):
     y_pred = classifier.predict(X)
 
     train_accuracy = accuracy_score(y, y_pred)
-    print(f"{classifier} Train Accuracy", train_accuracy)
+    print(f"{classifier_name} Train Accuracy", train_accuracy)
     
     kf = KFold(n_splits=splits, random_state=42, shuffle=True)
+    # loo = LeaveOneOut()
 
     accuracies = []
     confusion_matrices = []
